@@ -1,3 +1,10 @@
+##Authors: James Feng, Alex Hsu
+##Date: August 18, 2011
+##
+##MBS Calculator. Takes user inputs, calculates MBS cashflows by month, and exports
+##outputs to a .csv file. 
+
+##Gather user inputs
 currprin = float(raw_input('Current Principal ($): '))
 currwac = float(raw_input('Current WAC (%): '))/100
 monthlywac = currwac/12
@@ -21,6 +28,7 @@ while balloon == 'True':
 else:
     blnterm = origterm
 
+##Store inputs
 inputs = [['Current Principal ($)', 'Current WAC (%)', 'Original Term (mo)',
            'Servicer Fee (bp)', 'VPR (%)', 'CDR (%)', 'Severity (%)',
            'CDR Lag (mo)', 'Balloon?', 'Balloon Term'],
@@ -31,6 +39,7 @@ if balloon == 'True':
 else:
     inputs[1].append('N/A')
 
+##Cashflow calculations for first month
 data = []
 month = 1
 wala = 1
@@ -66,6 +75,7 @@ netvprunsched = vprunschedprin
 netcdrunsched = cdrunschedprin
 netloss = lossprin
 
+##Calculations for first n months with CDR lag
 while (month < cdrlag):
     month += 1
     wala += 1
@@ -87,6 +97,7 @@ while (month < cdrlag):
     netsched = netsched + schedprin
     netvprunsched = netvprunsched + vprunschedprin
 
+##Calculations for term up to balloon month
 while (month < (blnterm - 1)):
     month += 1
     wala += 1
@@ -113,6 +124,7 @@ while (month < (blnterm - 1)):
     netcdrunsched = netcdrunsched + cdrunschedprin
     netloss = netloss + lossprin
 
+##Calculations for balloon month
 month += 1
 wala += 1
 wam -= 1
@@ -137,13 +149,17 @@ netvprunsched = netvprunsched + vprunschedprin
 netcdrunsched = netcdrunsched + cdrunschedprin
 netloss = netloss + lossprin
 
+##Headers for output data
 headers = ['Month', 'WALA', 'WAM', 'Principal Balance ($)', 'Scheduled Principal ($)', 'Unscheduled VPR ($)',
            'Unscheduled CDR ($)', 'Unscheduled Principal Total ($)', 'Principal Loss ($)', 'Interest ($)',
            'Servicer Fee ($)', 'Payment ($)', 'Net Money ($)']
+
+##Print data to shell
 print headers
 for month in data:
     print month
 
+##Export data to .csv
 export = raw_input('Export data to CSV file? (Yes or No): ')
 if export == 'Yes':
     import csv
