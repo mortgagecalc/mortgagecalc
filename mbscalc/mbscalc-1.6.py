@@ -13,6 +13,10 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 header = 'Alex Hsu, James Feng, 8/17/2011, Version 1.6'
 jquerytheme = 'redmond'
 
+# this entire code is the source of the site. each class is a page on the site.
+# get method is the page that inititally displays. post method is the page that displays upon a call to post (usually from submitting forms).
+# self.response.out.write() outputs javascript and html as string to webpage.
+
 class MainPage(webapp.RequestHandler):
     def get(self):
         useremail = users.get_current_user().email()
@@ -66,6 +70,7 @@ class MainPage(webapp.RequestHandler):
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
         <script>
+            // access denied alert.
             $(document).ready(function() {
                 $("#access-denied").dialog({
                     modal: true,
@@ -155,6 +160,7 @@ class MBSCalculator(webapp.RequestHandler):
 </html>
     ''')
     def post(self):
+        # pulls inputs from form.
         currprin = float(self.request.get('currprin'))
         currwac = float(self.request.get('currwac'))/100
         monthlywac = currwac/12
@@ -175,6 +181,7 @@ class MBSCalculator(webapp.RequestHandler):
             check = ''
             term = ''
             disabled = 'disabled'
+        # begin to output page for mortgage calculator results.
         self.response.out.write('''
 <!-- '''+header+''' -->
 <html>
@@ -363,6 +370,7 @@ class MBSCalculator(webapp.RequestHandler):
                 for (var j=0;j<inputs.length;j++) {
                     intable.setCell(0, j, inputs[j]); }
 
+                // format columns to currency form.
                 var formatter = new google.visualization.NumberFormat();
                 formatter.format(intable, 0);
                 formatter.format(intable, 1);
@@ -395,6 +403,7 @@ class MBSCalculator(webapp.RequestHandler):
                     for (var j=0;j<data[0].length;j++) {
                         table.setCell(i, j, data[i][j]); } }
 
+                // format columns to currency form.
                 var formatter = new google.visualization.NumberFormat(
                     {negativeColor: 'red', negativeParens: true});
                 formatter.format(table, 3);
@@ -423,7 +432,8 @@ class MBSCalculator(webapp.RequestHandler):
                 coldata.addColumn('number', 'Interest');
                 coldata.addColumn('number', 'Servicer Fee');
                 coldata.addColumn('number', 'Month Range');
-                
+
+                // looping over every month to build coldata data table.
                 coldata.addRows(blnterm);
                 for(var m=0;m<blnterm;m++) {
                     coldata.setValue(m,0,data[m][0].toString());
@@ -434,6 +444,7 @@ class MBSCalculator(webapp.RequestHandler):
                     coldata.setValue(m,5,data[m][10]);
                     coldata.setValue(m,6,data[m][0]); }
 
+                // format columns to currency form.
                 var formatter = new google.visualization.NumberFormat({prefix:'$'});
                 formatter.format(coldata, 1);
                 formatter.format(coldata, 2);
@@ -478,6 +489,7 @@ class MBSCalculator(webapp.RequestHandler):
                 piedata.setValue(4,1,round(netint, 2));
                 piedata.setValue(5,1,round(monthlysvcfee*blnterm, 2));
 
+                // format columns to currency form.
                 var formatter = new google.visualization.NumberFormat({prefix:'$'});
                 formatter.format(piedata, 1);
                 
