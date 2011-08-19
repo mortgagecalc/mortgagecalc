@@ -19,13 +19,7 @@ jquerytheme = 'redmond'
 
 class MainPage(webapp.RequestHandler):
     def get(self):
-        useremail = users.get_current_user().email()
-        if ('@chilmarkhill.com' in useremail or
-            useremail == 'jake01@gmail.com' or
-            useremail == 'alexhsu92@gmail.com' or
-            useremail == 'broncos24@gmail.com' or
-            useremail == 'jcmaltmail@gmail.com'):
-            self.response.out.write('''
+        self.response.out.write('''
 <!-- '''+header+''' -->
 <html>
     <head>
@@ -57,38 +51,6 @@ class MainPage(webapp.RequestHandler):
         Optimized for Google Chrome.<br />
         Known bugs in Mozilla Firefox.<br />
         Not supported in Internet Explorer.</p>
-    </body>
-</html>
-        ''')
-        else:
-            self.response.out.write('''
-<!-- '''+header+''' -->
-<html>
-    <head>
-        <title>Access Denied</title>
-        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/themes/'''+jquerytheme+'''/jquery-ui.css" rel="stylesheet" type="text/css"/>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
-        <script>
-            // access denied alert.
-            $(document).ready(function() {
-                $("#access-denied").dialog({
-                    modal: true,
-                    resizable: false,
-                    draggable: false,
-                    closeOnEscape: false,
-                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
-                    buttons: {"Return to Login": function() {
-                        location.replace("'''+users.create_logout_url("/")+'''");
-                        $( this ).dialog( "close" ); } }
-                });
-            });
-        </script>
-    </head>
-    <body style="font-size:62.5%;">
-        <div id="access-denied" title="Access Denied">
-            <p style="text-align:center;">User Access Denied.</p>
-        </div>
     </body>
 </html>
         ''')
@@ -1129,7 +1091,14 @@ class CashFlowGrapher(webapp.RequestHandler):
 # price finder takes in CUSIP and searches on fidelity website for a price.
 class PriceFinder(webapp.RequestHandler):
     def get(self):
-        self.response.out.write('''
+        # check if user is authorized.
+        useremail = users.get_current_user().email()
+        if ('@chilmarkhill.com' in useremail or
+            useremail == 'jake01@gmail.com' or
+            useremail == 'alexhsu92@gmail.com' or
+            useremail == 'broncos24@gmail.com' or
+            useremail == 'jcmaltmail@gmail.com'):
+            self.response.out.write('''
 <!-- '''+header+''' -->
 <html>
     <head>
@@ -1185,6 +1154,41 @@ class PriceFinder(webapp.RequestHandler):
     </body>
 </html>
         ''')
+        # deny access if not authorized.
+        else:
+            self.response.out.write('''
+<!-- '''+header+''' -->
+<html>
+    <head>
+        <title>Access Denied</title>
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/themes/'''+jquerytheme+'''/jquery-ui.css" rel="stylesheet" type="text/css"/>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+        <script>
+            // access denied alert.
+            $(document).ready(function() {
+                $("#access-denied").dialog({
+                    modal: true,
+                    resizable: false,
+                    draggable: false,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                    buttons: [
+                        {text: "Login",
+                        click: function() {location.replace("'''+users.create_logout_url("/")+'''"); $( this ).dialog( "close" ); } },
+                        {text: "Home",
+                        click: function() {location.replace("/"); $( this ).dialog( "close" ); } }]
+                });
+            });
+        </script>
+    </head>
+    <body style="font-size:62.5%;">
+        <div id="access-denied" title="Access Denied">
+            <p style="text-align:center;">User Access Denied.</p>
+        </div>
+    </body>
+</html>
+        ''')
     def post(self):
         raw_data = []
         # if using the first option (CUSIP in a list), format input into list.
@@ -1223,7 +1227,14 @@ class PriceFinder(webapp.RequestHandler):
             return pxmat
         # passes input data into pxfinder.
         data = pxfinder(raw_data)
-        self.response.out.write('''
+        # check if user is authorized. extra security in case post method submitted.
+        useremail = users.get_current_user().email()
+        if ('@chilmarkhill.com' in useremail or
+            useremail == 'jake01@gmail.com' or
+            useremail == 'alexhsu92@gmail.com' or
+            useremail == 'broncos24@gmail.com' or
+            useremail == 'jcmaltmail@gmail.com'):
+            self.response.out.write('''
 <!-- '''+header+''' -->
 <html>
     <head>
@@ -1301,6 +1312,41 @@ class PriceFinder(webapp.RequestHandler):
             <div>
                 <div id="table_div" align="center"></div>
             </div>
+        </div>
+    </body>
+</html>
+        ''')
+        # deny access if not authorized.
+        else:
+            self.response.out.write('''
+<!-- '''+header+''' -->
+<html>
+    <head>
+        <title>Access Denied</title>
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/themes/'''+jquerytheme+'''/jquery-ui.css" rel="stylesheet" type="text/css"/>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+        <script>
+            // access denied alert.
+            $(document).ready(function() {
+                $("#access-denied").dialog({
+                    modal: true,
+                    resizable: false,
+                    draggable: false,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                    buttons: [
+                        {text: "Login",
+                        click: function() {location.replace("'''+users.create_logout_url("/")+'''"); $( this ).dialog( "close" ); } },
+                        {text: "Home",
+                        click: function() {location.replace("/"); $( this ).dialog( "close" ); } }]
+                });
+            });
+        </script>
+    </head>
+    <body style="font-size:62.5%;">
+        <div id="access-denied" title="Access Denied">
+            <p style="text-align:center;">User Access Denied.</p>
         </div>
     </body>
 </html>
