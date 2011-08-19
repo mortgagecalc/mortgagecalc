@@ -5,5 +5,5 @@ api_version: 1
 
 handlers:
 - url: .*
-  script: mbscalc-1.7-inprogress.py
+  script: mbscalc-1.7.py
   login: required
